@@ -2,37 +2,29 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Job Scraper</title>
+    <title>Search Results</title>
     <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap"
       rel="stylesheet"
-      href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css"
     />
     <style>
-      /* Apple-inspired minimalist design */
       :root {
-        --primary-color: #007aff; /* Apple Blue */
-        --background-color: #ffffff;
-        --text-color: #1c1c1e;
-        --border-color: #d1d1d6;
+        --primary-color: #ff007a; /* 포인트 핑크 */
+        --background-color: #121212; /* 어두운 배경 */
+        --card-background: #1e1e1e; /* 테이블 및 카드 배경 */
+        --text-color: #ffffff; /* 기본 텍스트 */
+        --muted-text-color: #bbbbbb; /* 보조 텍스트 */
+        --border-color: #2c2c2c; /* 테두리 */
+        --hover-background: #292929; /* 테이블 행 호버 */
+        --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         --border-radius: 8px;
-        --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         --transition: all 0.3s ease;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --background-color: #1c1c1e;
-          --text-color: #f5f5f5;
-          --border-color: #3a3a3c;
-          --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
+        --font-family: 'DM Sans', Arial, sans-serif;
       }
 
       body {
-        font-family: -apple-system, BlinkMacSystemFont, 'San Francisco',
-          'Helvetica Neue', Arial, sans-serif;
+        font-family: var(--font-family);
         background-color: var(--background-color);
         color: var(--text-color);
         margin: 0;
@@ -42,38 +34,49 @@
       }
 
       main {
-        max-width: 800px;
+        max-width: 900px;
         margin: 2rem auto;
-        padding: 1rem;
+        padding: 0 1rem;
       }
 
       h1 {
         font-size: 1.75rem;
-        font-weight: 600;
+        font-weight: bold;
+        color: var(--text-color);
         margin-bottom: 1rem;
+      }
+
+      .jobs-count {
+        font-size: 0.9rem;
+        color: var(--muted-text-color);
+        margin-bottom: 1.5rem;
       }
 
       table {
         width: 100%;
         border-collapse: collapse;
-        border-spacing: 0;
-        border: 1px solid var(--border-color);
+        margin: 1rem 0;
+        background-color: var(--card-background);
         border-radius: var(--border-radius);
         overflow: hidden;
         box-shadow: var(--box-shadow);
-        background-color: var(--background-color);
-        transition: var(--transition);
-      }
-
-      th,
-      td {
-        padding: 1rem;
-        text-align: left;
-        border-bottom: 1px solid var(--border-color);
       }
 
       th {
-        font-weight: 600;
+        background-color: #2a2a2a;
+        text-align: left;
+        padding: 1rem;
+        font-size: 0.9rem;
+        color: var(--muted-text-color);
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      td {
+        padding: 1rem;
+        font-size: 0.9rem;
+        color: var(--text-color);
+        border-bottom: 1px solid var(--border-color);
       }
 
       tr:last-child td {
@@ -81,23 +84,38 @@
       }
 
       tr:hover {
-        background-color: rgba(0, 0, 0, 0.05);
+        background-color: var(--hover-background);
       }
 
       a {
         color: var(--primary-color);
         text-decoration: none;
         font-weight: 500;
-        transition: var(--transition);
       }
 
       a:hover {
         text-decoration: underline;
       }
 
+      .apply-link {
+        font-size: 0.85rem;
+        font-weight: bold;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        text-align: center;
+        display: inline-block;
+        transition: var(--transition);
+      }
+
+      .apply-link:hover {
+        background-color: #cc0066;
+      }
+
       @media (max-width: 768px) {
         table {
-          font-size: 0.9rem;
+          font-size: 0.85rem;
         }
         th,
         td {
@@ -109,28 +127,31 @@
   <body>
     <main>
       <h1>Search Results for "{{ keyword }}":</h1>
-      <figure>
-        <table role="grid">
-          <thead>
-            <tr>
-              <th>Position</th>
-              <th>Company</th>
-              <th>Location</th>
-              <th>Link</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for job in jobs %}
-            <tr>
-              <td>{{ job.position }}</td>
-              <td>{{ job.company }}</td>
-              <td>{{ job.location }}</td>
-              <td><a href="{{ job.link }}" target="_blank">Apply &rarr;</a></td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </figure>
+      <p class="jobs-count">{{ count }} jobs found</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Position</th>
+            <th>Company</th>
+            <th>Location</th>
+            <th>Link</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for job in jobs %}
+          <tr>
+            <td>{{ job.position }}</td>
+            <td>{{ job.company }}</td>
+            <td>{{ job.location }}</td>
+            <td>
+              <a class="apply-link" href="{{ job.link }}" target="_blank"
+                >Apply</a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </main>
   </body>
 </html>
